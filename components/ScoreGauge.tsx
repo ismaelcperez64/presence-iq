@@ -6,9 +6,10 @@ import type { Verdict } from '@/types/audit';
 interface Props {
   score: number;
   verdict: Verdict;
+  onVerdictClick?: () => void;
 }
 
-export default function ScoreGauge({ score, verdict }: Props) {
+export default function ScoreGauge({ score, verdict, onVerdictClick }: Props) {
   const colors = getVerdictColor(verdict);
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (score / 100) * circumference;
@@ -36,9 +37,20 @@ export default function ScoreGauge({ score, verdict }: Props) {
         </div>
       </div>
 
-      <div className={`px-4 py-1.5 rounded-full border text-sm font-bold ${colors.text} ${colors.bg} ${colors.border}`}>
-        {verdict}
-      </div>
+      {onVerdictClick ? (
+        <button
+          onClick={onVerdictClick}
+          className={`px-4 py-1.5 rounded-full border text-sm font-bold transition-all hover:opacity-80 hover:scale-105 flex items-center gap-1.5 ${colors.text} ${colors.bg} ${colors.border}`}
+          title="Click to learn about your score"
+        >
+          {verdict}
+          <span className="text-xs opacity-60">ⓘ</span>
+        </button>
+      ) : (
+        <div className={`px-4 py-1.5 rounded-full border text-sm font-bold ${colors.text} ${colors.bg} ${colors.border}`}>
+          {verdict}
+        </div>
+      )}
     </div>
   );
 }

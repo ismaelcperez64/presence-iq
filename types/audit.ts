@@ -18,17 +18,24 @@ export interface PlatformPresence {
 
 export interface NegativeContent {
   source: string;
-  url?: string;
+  url?: string | null;
   snippet: string;
   severity: 'low' | 'medium' | 'high';
-  type: 'review' | 'complaint' | 'news' | 'forum' | 'other';
+  type: 'review' | 'complaint' | 'news' | 'forum' | 'derogatory' | 'other';
 }
 
 export interface Copycat {
   platform: string;
-  url?: string;
+  url?: string | null;
   description: string;
   riskLevel: 'low' | 'medium' | 'high';
+}
+
+export interface SimilarProfile {
+  name: string;
+  platform: string;
+  url?: string | null;
+  similarity: string;
 }
 
 export interface Recommendation {
@@ -52,6 +59,7 @@ export interface AuditResult {
   platforms: PlatformPresence[];
   negativeContent: NegativeContent[];
   copycats: Copycat[];
+  similarProfiles?: SimilarProfile[];
   recommendations: Recommendation[];
   scannedAt: string;
 }
