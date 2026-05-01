@@ -1,0 +1,124 @@
+{
+  "name": "PresenceIQ - Digital Presence Audit",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "presence-audit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json;\nconst body = d.body || d;\nconst name = body.name || '';\nconst biz  = body.businessName || '';\nconst prof = body.profession || 'professional';\nconst loc  = body.location ? `, ${body.location}` : '';\nconst web  = body.website  ? `. Their website is ${body.website}` : '';\n\nconst query = `Do a comprehensive digital presence audit for ${name}, a ${prof}${loc}. Their business is called \"${biz}\"${web}.\n\nSearch the entire web and report on:\n1. All social media profiles found (LinkedIn, Facebook, Instagram, X/Twitter, TikTok, YouTube, Pinterest) — include URLs and whether they appear active/verified\n2. Business listings (Google Business Profile, Yelp, BBB, Zillow, Realtor.com if applicable) — include ratings and review counts\n3. Personal website or blog presence\n4. Any negative content: complaints, bad reviews, scam reports, BBB disputes, Reddit threads, news articles\n5. Any copycat profiles, fake accounts, domain squatters, or impersonators using their name\n6. Overall assessment of their digital presence strength\n\nBe specific — include actual URLs where found, star ratings where applicable, and quote any negative content verbatim.`;\n\nreturn [{ json: { input: d, query } }];"
+      },
+      "id": "build-query",
+      "name": "Build Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_PERPLEXITY_API_KEY" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'sonar-pro', messages: [{ role: 'user', content: $json.query }], max_tokens: 2000 }) }}",
+        "options": {}
+      },
+      "id": "perplexity-search",
+      "name": "Perplexity Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input     = $('Build Query').first().json.input;\nconst rawSearch = $input.first().json;\nconst research  = rawSearch?.choices?.[0]?.message?.content || '';\n\nif (!research) {\n  return [{ json: { error: 'Perplexity returned no data', raw: JSON.stringify(rawSearch).slice(0, 300) } }];\n}\n\nconst prompt = `You are a digital presence analyst. Based on this web research, produce a scored audit report for ${input.name} (${input.businessName}, ${input.profession}).\n\nWEB RESEARCH FINDINGS:\n${research}\n\nReturn ONLY valid JSON (no markdown, no code fences, no explanation) matching this exact schema:\n{\n  \"overallScore\": <integer 0-100>,\n  \"verdict\": \"Digital Danger Zone\" | \"Needs Work\" | \"Building Momentum\" | \"Authority Status\",\n  \"summary\": \"<2-3 sentence plain-English summary of their digital presence>\",\n  \"platforms\": [\n    { \"platform\": \"<name>\", \"icon\": \"<1 emoji>\", \"found\": <boolean>, \"url\": <string or null>, \"score\": <0-100>, \"verified\": <boolean>, \"notes\": \"<short note about their presence here>\" }\n  ],\n  \"negativeContent\": [\n    { \"source\": \"<platform/site name>\", \"url\": <string or null>, \"snippet\": \"<what was said>\", \"severity\": \"low\" | \"medium\" | \"high\", \"type\": \"review\" | \"complaint\" | \"news\" | \"forum\" | \"other\" }\n  ],\n  \"copycats\": [\n    { \"platform\": \"<name>\", \"url\": <string or null>, \"description\": \"<what was found>\", \"riskLevel\": \"low\" | \"medium\" | \"high\" }\n  ],\n  \"recommendations\": [\n    { \"priority\": \"immediate\" | \"high\" | \"medium\" | \"low\", \"category\": \"<category>\", \"action\": \"<specific action to take>\", \"impact\": \"<why this matters for leads>\", \"difficulty\": \"easy\" | \"medium\" | \"hard\" }\n  ],\n  \"scannedAt\": \"${new Date().toISOString()}\"\n}\n\nRules:\n- Always include these 11 platforms (found=false if not detected): Google Business Profile, LinkedIn, Facebook, Instagram, X (Twitter), TikTok, YouTube, Yelp, Zillow, Realtor.com, Personal Website\n- Provide exactly 6 recommendations ranked by priority\n- Score: 0-39=Digital Danger Zone, 40-64=Needs Work, 65-84=Building Momentum, 85-100=Authority Status\n- Base score on: number of platforms found, profile completeness, review quality, absence of negatives, verified accounts`;\n\nreturn [{ json: { input, prompt } }];"
+      },
+      "id": "prepare-prompt",
+      "name": "Prepare Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "YOUR_ANTHROPIC_API_KEY" },
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 4096, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-analysis",
+      "name": "Claude Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json?.content?.[0]?.text || '';\nlet result;\ntry {\n  const cleaned = raw.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  result = JSON.parse(cleaned);\n} catch (e) {\n  return [{ json: { error: 'Failed to parse AI response', raw: raw.slice(0, 500) } }];\n}\nreturn [{ json: result }];"
+      },
+      "id": "parse-response",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" },
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Webhook":          { "main": [[{ "node": "Build Query",      "type": "main", "index": 0 }]] },
+    "Build Query":      { "main": [[{ "node": "Perplexity Search","type": "main", "index": 0 }]] },
+    "Perplexity Search":{ "main": [[{ "node": "Prepare Prompt",  "type": "main", "index": 0 }]] },
+    "Prepare Prompt":   { "main": [[{ "node": "Claude Analysis",  "type": "main", "index": 0 }]] },
+    "Claude Analysis":  { "main": [[{ "node": "Parse Response",  "type": "main", "index": 0 }]] },
+    "Parse Response":   { "main": [[{ "node": "Respond to Webhook","type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+}
