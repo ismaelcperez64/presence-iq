@@ -4,6 +4,13 @@ export interface AuditInput {
   profession: string;
   location?: string;
   website?: string;
+  socialName?: string;
+  socialHandle?: string;
+  linkedinUrl?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
+  instagramUrl?: string;
 }
 
 export interface PlatformPresence {
