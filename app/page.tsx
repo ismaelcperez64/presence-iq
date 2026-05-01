@@ -4,6 +4,7 @@ import { useState } from 'react';
 import AuditForm from '@/components/AuditForm';
 import ScanProgress from '@/components/ScanProgress';
 import ResultsDashboard from '@/components/ResultsDashboard';
+import LegalDisclaimer from '@/components/LegalDisclaimer';
 import type { AuditInput, AuditResult } from '@/types/audit';
 
 type AppState = 'idle' | 'scanning' | 'results' | 'error';
@@ -78,6 +79,8 @@ export default function Home() {
           <div className="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
             <AuditForm onSubmit={handleSubmit} loading={false} />
           </div>
+
+          <LegalDisclaimer />
 
           {/* Trust row */}
           <div className="flex flex-wrap justify-center gap-6 mt-6 text-xs text-slate-600">

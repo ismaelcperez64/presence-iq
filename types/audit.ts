@@ -1,3 +1,8 @@
+export interface CustomPlatform {
+  platform: string;
+  url: string;
+}
+
 export interface AuditInput {
   name: string;
   businessName: string;
@@ -11,6 +16,7 @@ export interface AuditInput {
   twitterUrl?: string;
   youtubeUrl?: string;
   instagramUrl?: string;
+  otherProfiles?: CustomPlatform[];
 }
 
 export interface PlatformPresence {
