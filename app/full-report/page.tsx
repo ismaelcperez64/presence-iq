@@ -29,8 +29,8 @@ function FullReportContent() {
 
   const goToPayment = (includeDFY: boolean) => {
     const base = includeDFY
-      ? 'https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01'
-      : 'https://buy.stripe.com/test_4gMaEW58qb274YfgKK9ws00';
+      ? 'https://buy.stripe.com/test_4gMaEW58qb274YfgKK9ws00'
+      : 'https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01';
     const paymentUrl = `${base}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(name)}`;
     window.open(paymentUrl, '_blank');
     setShowUpsell(false);

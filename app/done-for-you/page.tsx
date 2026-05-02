@@ -15,17 +15,32 @@ const INCLUDED = [
 ];
 
 const STEPS = [
-  { num: '01', title: 'We Review Your Audit', desc: "Your PresenceIQ results tell us exactly what's missing and what needs fixing." },
+  { num: '01', title: 'We Review Your Audit', desc: 'Your PresenceIQ results tell us exactly what\'s missing and what needs fixing.' },
   { num: '02', title: 'We Build Everything', desc: 'Your team creates, optimizes, and publishes all your profiles within 5 business days.' },
   { num: '03', title: 'We Automate Your Leads', desc: 'Monthly automation runs in the background — driving traffic while you close deals.' },
 ];
 
 const FAQS = [
-  { q: 'What platforms do you build?', a: 'Facebook Business Page, YouTube Channel, and LinkedIn Profile are included in every Done For You package. Additional platforms (Instagram, TikTok, Google Business) can be added on request.' },
-  { q: 'How long does setup take?', a: "Your profiles are built and live within 5 business days. You'll receive a walkthrough and handoff call when everything is ready." },
-  { q: 'What does the $59/month include?', a: 'Monthly content scheduling (4 posts per platform), lead capture automation maintenance, performance reporting, and ongoing copycat monitoring. Cancel anytime.' },
-  { q: 'Do I need to create content?', a: 'No. We write all your profile content using AI trained on your profession, location, and brand. You review and approve before anything goes live.' },
-  { q: "What if I'm not satisfied?", a: "We offer a 30-day satisfaction guarantee. If your profiles aren't live and looking great within 30 days, we'll refund your setup fee — no questions asked." },
+  {
+    q: 'What platforms do you build?',
+    a: 'Facebook Business Page, YouTube Channel, and LinkedIn Profile are included in every Done For You package. Additional platforms (Instagram, TikTok, Google Business) can be added on request.',
+  },
+  {
+    q: 'How long does setup take?',
+    a: 'Your profiles are built and live within 5 business days. You\'ll receive a walkthrough and handoff call when everything is ready.',
+  },
+  {
+    q: 'What does the $59/month include?',
+    a: 'Monthly content scheduling (4 posts per platform), lead capture automation maintenance, performance reporting, and ongoing copycat monitoring. Cancel anytime.',
+  },
+  {
+    q: 'Do I need to create content?',
+    a: 'No. We write all your profile content using AI trained on your profession, location, and brand. You review and approve before anything goes live.',
+  },
+  {
+    q: 'What if I\'m not satisfied?',
+    a: 'We offer a 30-day satisfaction guarantee. If your profiles aren\'t live and looking great within 30 days, we\'ll refund your setup fee — no questions asked.',
+  },
 ];
 
 function DoneForYouContent() {
@@ -52,7 +67,7 @@ function DoneForYouContent() {
       });
     } catch { /* ignore */ }
     window.open(
-      `https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01?prefilled_email=${encodeURIComponent(orderEmail)}&client_reference_id=${encodeURIComponent(orderName)}`,
+      `https://buy.stripe.com/test_4gMaEW58qb274YfgKK9ws00?prefilled_email=${encodeURIComponent(orderEmail)}&client_reference_id=${encodeURIComponent(orderName)}`,
       '_blank'
     );
     setOrdered(true);
@@ -67,8 +82,11 @@ function DoneForYouContent() {
   return (
     <main className="min-h-screen bg-brand-dark">
 
+      {/* ── HERO with video ── */}
       <section className="px-4 pt-12 pb-16">
         <div className="max-w-3xl mx-auto text-center">
+
+          {/* Logo */}
           <div className="mb-8">
             <a href="/" className="inline-flex items-center gap-2 text-brand-cyan font-black text-lg tracking-tight">
               <span className="text-2xl">🔍</span> PresenceIQ
@@ -83,28 +101,38 @@ function DoneForYouContent() {
 
           <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">
             We Build Your Entire<br />
-            <span className="bg-gradient-to-r from-brand-blue to-brand-cyan bg-clip-text text-transparent">Digital Presence</span><br />
-            From Scratch.
+            <span className="bg-gradient-to-r from-brand-blue to-brand-cyan bg-clip-text text-transparent">
+              Digital Presence
+            </span>
+            <br />From Scratch.
           </h1>
           <p className="text-slate-400 text-lg max-w-xl mx-auto mb-8">
-            While you focus on closing deals — we create, optimize, and automate your Facebook, YouTube, and LinkedIn. Powered by AI. Managed by humans.
+            While you focus on closing deals — we create, optimize, and automate your
+            Facebook, YouTube, and LinkedIn. Powered by AI. Managed by humans.
           </p>
 
+          {/* Pricing badge */}
           <div className="inline-flex flex-col items-center gap-1 mb-8">
             <div className="flex items-baseline gap-2">
               <span className="text-5xl font-black text-white">$297</span>
               <span className="text-slate-400">one-time setup</span>
             </div>
-            <div className="text-slate-400 text-lg">+ <span className="text-white font-bold">$59/mo</span><span className="text-slate-500 text-sm ml-1">lead automation</span></div>
+            <div className="text-slate-400 text-lg">
+              + <span className="text-white font-bold">$59/mo</span>
+              <span className="text-slate-500 text-sm ml-1">lead automation</span>
+            </div>
           </div>
 
-          <button onClick={() => setShowOrderModal(true)}
-            className="px-10 py-4 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-brand-cyan/20">
+          <button
+            onClick={() => setShowOrderModal(true)}
+            className="px-10 py-4 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-brand-cyan/20"
+          >
             Get Started Today →
           </button>
           <p className="text-xs text-slate-600 mt-3">Cancel monthly anytime • 30-day satisfaction guarantee</p>
         </div>
 
+        {/* Video embed */}
         <div className="max-w-3xl mx-auto mt-12">
           <div className="rounded-2xl border border-brand-border bg-brand-card overflow-hidden aspect-video flex items-center justify-center">
             <div className="text-center p-8">
@@ -116,6 +144,7 @@ function DoneForYouContent() {
         </div>
       </section>
 
+      {/* ── What's Included ── */}
       <section className="px-4 py-16 bg-brand-card/50 border-y border-brand-border">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
@@ -136,6 +165,7 @@ function DoneForYouContent() {
         </div>
       </section>
 
+      {/* ── How It Works ── */}
       <section className="px-4 py-16">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
@@ -158,6 +188,7 @@ function DoneForYouContent() {
         </div>
       </section>
 
+      {/* ── Pricing CTA ── */}
       <section className="px-4 py-16 bg-brand-card/50 border-y border-brand-border">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-2">Ready to own your digital presence?</h2>
@@ -180,14 +211,18 @@ function DoneForYouContent() {
                 </li>
               ))}
             </ul>
-            <button onClick={() => setShowOrderModal(true)}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90">
+            <button
+              onClick={() => setShowOrderModal(true)}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90 transition-opacity"
+            >
               Get Started — $297 Setup →
             </button>
+            <p className="text-xs text-slate-600 mt-2">Cancel monthly anytime • Secure checkout</p>
           </div>
         </div>
       </section>
 
+      {/* ── FAQ ── */}
       <section className="px-4 py-16">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
@@ -196,13 +231,17 @@ function DoneForYouContent() {
           <div className="space-y-3">
             {FAQS.map((faq, i) => (
               <div key={i} className="rounded-xl border border-brand-border bg-brand-card overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-brand-border/20 transition-colors">
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-brand-border/20 transition-colors"
+                >
                   <span className="text-white font-semibold text-sm">{faq.q}</span>
                   <span className="text-slate-400 text-sm flex-shrink-0 ml-3">{openFaq === i ? '▲' : '▼'}</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-5 pb-4 text-slate-400 text-sm leading-relaxed border-t border-brand-border pt-3">{faq.a}</div>
+                  <div className="px-5 pb-4 text-slate-400 text-sm leading-relaxed border-t border-brand-border pt-3">
+                    {faq.a}
+                  </div>
                 )}
               </div>
             ))}
@@ -210,25 +249,38 @@ function DoneForYouContent() {
         </div>
       </section>
 
+      {/* ── Footer guarantee ── */}
       <section className="px-4 py-10 text-center border-t border-brand-border">
         <div className="max-w-md mx-auto">
           <div className="text-5xl mb-4">🛡️</div>
           <h3 className="text-xl font-black text-white mb-2">30-Day Satisfaction Guarantee</h3>
-          <p className="text-slate-400 text-sm">If your profiles aren&apos;t live and looking great within 30 days, we&apos;ll refund your setup fee in full. No questions asked.</p>
+          <p className="text-slate-400 text-sm">
+            If your profiles aren&apos;t live and looking great within 30 days, we&apos;ll refund your setup fee in full. No questions asked.
+          </p>
         </div>
-        <a href="/" className="block mt-8 text-sm text-slate-600 hover:text-slate-400 transition-colors">← Back to audit</a>
+        <a href="/" className="block mt-8 text-sm text-slate-600 hover:text-slate-400 transition-colors">
+          ← Back to audit
+        </a>
       </section>
 
+      {/* ── Order Modal ── */}
       {showOrderModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-brand-card border border-brand-border rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+
             {ordered ? (
               <div className="text-center">
                 <div className="text-5xl mb-4">🎉</div>
-                <h2 className="text-2xl font-black text-white mb-2">Redirecting to checkout!</h2>
-                <p className="text-slate-400 text-sm mb-6">Your Stripe checkout opened in a new tab. Complete your purchase there to get started.</p>
-                <button onClick={() => { setShowOrderModal(false); setOrdered(false); }}
-                  className="px-6 py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-slate-700">Close</button>
+                <h2 className="text-2xl font-black text-white mb-2">Checkout opened!</h2>
+                <p className="text-slate-400 text-sm mb-6">
+                  Complete your payment in the new tab. We&apos;ll reach out within 24 hours to kick off your profile build.
+                </p>
+                <button
+                  onClick={() => { setShowOrderModal(false); setOrdered(false); }}
+                  className="px-6 py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-slate-700 transition-colors"
+                >
+                  Close
+                </button>
               </div>
             ) : (
               <>
@@ -239,22 +291,44 @@ function DoneForYouContent() {
                 <form onSubmit={handleOrder} className="space-y-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
-                    <input type="text" value={orderName} onChange={e => setOrderName(e.target.value)} placeholder="Jane Smith"
-                      className="w-full bg-brand-dark border border-brand-border rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-brand-cyan text-sm" />
+                    <input
+                      type="text"
+                      value={orderName}
+                      onChange={e => setOrderName(e.target.value)}
+                      placeholder="Jane Smith"
+                      className="w-full bg-brand-dark border border-brand-border rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-brand-cyan transition-colors text-sm"
+                    />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Email <span className="text-red-400">*</span></label>
-                    <input type="email" value={orderEmail} onChange={e => setOrderEmail(e.target.value)} placeholder="jane@example.com" required
-                      className="w-full bg-brand-dark border border-brand-border rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-brand-cyan text-sm" />
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                      Email <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={orderEmail}
+                      onChange={e => setOrderEmail(e.target.value)}
+                      placeholder="jane@example.com"
+                      required
+                      className="w-full bg-brand-dark border border-brand-border rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-brand-cyan transition-colors text-sm"
+                    />
                   </div>
-                  <button type="submit" disabled={ordering}
-                    className="w-full py-4 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90 disabled:opacity-50">
+                  <button
+                    type="submit"
+                    disabled={ordering}
+                    className="w-full py-4 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
                     {ordering ? 'Processing...' : 'Proceed to Checkout →'}
                   </button>
-                  <p className="text-center text-xs text-slate-600">🔒 Secure checkout via Stripe</p>
+                  <p className="text-center text-xs text-slate-600">
+                    🔒 Secure checkout via Stripe
+                  </p>
                 </form>
-                <button onClick={() => setShowOrderModal(false)}
-                  className="w-full mt-2 py-2 text-sm text-slate-600 hover:text-slate-400">Cancel</button>
+                <button
+                  onClick={() => setShowOrderModal(false)}
+                  className="w-full mt-2 py-2 text-sm text-slate-600 hover:text-slate-400 transition-colors"
+                >
+                  Cancel
+                </button>
               </>
             )}
           </div>
