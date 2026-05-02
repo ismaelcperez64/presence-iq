@@ -51,8 +51,10 @@ function DoneForYouContent() {
         body: JSON.stringify({ email: orderEmail, name: orderName, score, verdict, tier: 'done-for-you' }),
       });
     } catch { /* ignore */ }
-    // TODO: redirect to Stripe/PayPal
-    // window.location.href = `https://buy.stripe.com/placeholder-dfy?prefilled_email=${encodeURIComponent(orderEmail)}`;
+    window.open(
+      `https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01?prefilled_email=${encodeURIComponent(orderEmail)}&client_reference_id=${encodeURIComponent(orderName)}`,
+      '_blank'
+    );
     setOrdered(true);
     setOrdering(false);
   };
@@ -223,8 +225,8 @@ function DoneForYouContent() {
             {ordered ? (
               <div className="text-center">
                 <div className="text-5xl mb-4">🎉</div>
-                <h2 className="text-2xl font-black text-white mb-2">You&apos;re on the list!</h2>
-                <p className="text-slate-400 text-sm mb-6">We&apos;ll reach out within 24 hours. Check your inbox at <span className="text-white font-semibold">{orderEmail}</span>.</p>
+                <h2 className="text-2xl font-black text-white mb-2">Redirecting to checkout!</h2>
+                <p className="text-slate-400 text-sm mb-6">Your Stripe checkout opened in a new tab. Complete your purchase there to get started.</p>
                 <button onClick={() => { setShowOrderModal(false); setOrdered(false); }}
                   className="px-6 py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-slate-700">Close</button>
               </div>
@@ -249,7 +251,7 @@ function DoneForYouContent() {
                     className="w-full py-4 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90 disabled:opacity-50">
                     {ordering ? 'Processing...' : 'Proceed to Checkout →'}
                   </button>
-                  <p className="text-center text-xs text-slate-600">🔒 Secure checkout via Stripe or PayPal</p>
+                  <p className="text-center text-xs text-slate-600">🔒 Secure checkout via Stripe</p>
                 </form>
                 <button onClick={() => setShowOrderModal(false)}
                   className="w-full mt-2 py-2 text-sm text-slate-600 hover:text-slate-400">Cancel</button>

@@ -25,12 +25,11 @@ function FullReportContent() {
   const handlePurchase = () => setShowUpsell(true);
 
   const goToPayment = (includeDFY: boolean) => {
-    // TODO: Replace with actual Stripe/PayPal payment link
-    const paymentUrl = includeDFY
-      ? `https://buy.stripe.com/placeholder-dfy?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(name)}`
-      : `https://buy.stripe.com/placeholder-report?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(name)}`;
-    alert(`Payment link coming soon!\n\nThis will redirect to Stripe/PayPal for ${includeDFY ? '$297 setup + $59/mo' : '$47 one-time'}.`);
-    void paymentUrl;
+    const base = includeDFY
+      ? 'https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01'
+      : 'https://buy.stripe.com/test_4gMaEW58qb274YfgKK9ws00';
+    const paymentUrl = `${base}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(name)}`;
+    window.open(paymentUrl, '_blank');
   };
 
   const verdictColor =
@@ -97,11 +96,11 @@ function FullReportContent() {
             className="w-full py-4 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-base hover:opacity-90 transition-opacity">
             Complete Purchase — $47 →
           </button>
-          <p className="text-center text-xs text-slate-600 mt-2">🔒 Secure checkout via Stripe or PayPal • Instant delivery</p>
+          <p className="text-center text-xs text-slate-600 mt-2">🔒 Secure checkout via Stripe • Instant delivery</p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 text-xs text-slate-600">
-          <span>💳 Stripe &amp; PayPal accepted</span>
+          <span>💳 Stripe accepted</span>
           <span>📬 Delivered instantly to your email</span>
           <span>🔒 100% money-back guarantee</span>
         </div>
