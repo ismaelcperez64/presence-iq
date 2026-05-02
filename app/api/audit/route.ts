@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
+import { storeAuditData } from '@/lib/kv';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -21,7 +23,12 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await upstream.json();
-    return NextResponse.json(data);
+
+    // Store full audit result so we can generate the report after payment
+    const sessionId = randomUUID();
+    await storeAuditData(sessionId, { auditResult: data, input: body });
+
+    return NextResponse.json({ ...data, sessionId });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ error: `Audit failed: ${message}` }, { status: 502 });
