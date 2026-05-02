@@ -2,9 +2,10 @@ import type { PlatformPresence } from '@/types/audit';
 
 interface Props {
   platforms: PlatformPresence[];
+  onCreateProfile?: (platform: string) => void;
 }
 
-export default function PlatformGrid({ platforms }: Props) {
+export default function PlatformGrid({ platforms, onCreateProfile }: Props) {
   const found = platforms.filter(p => p.found);
   const missing = platforms.filter(p => !p.found);
 
@@ -92,12 +93,13 @@ export default function PlatformGrid({ platforms }: Props) {
                   <span className="text-sm font-semibold text-white leading-tight">{p.platform}</span>
                 </div>
                 <p className="text-xs text-slate-500 leading-tight">{p.notes}</p>
-                <a
-                  href="#cta-section"
-                  className="text-xs text-brand-cyan/70 hover:text-brand-cyan transition-colors mt-auto"
+                <button
+                  type="button"
+                  onClick={() => onCreateProfile?.(p.platform)}
+                  className="text-xs text-brand-cyan/70 hover:text-brand-cyan transition-colors mt-auto text-left"
                 >
                   Create profile →
-                </a>
+                </button>
               </div>
             ))}
           </div>

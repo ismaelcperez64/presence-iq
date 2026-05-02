@@ -9,6 +9,7 @@ import CopycatAlerts from './CopycatAlerts';
 import RecommendationsList from './RecommendationsList';
 import CTASection from './CTASection';
 import ScoreExplanationModal from './ScoreExplanationModal';
+import ProfileQuestionnaireModal from './ProfileQuestionnaireModal';
 
 type Tab = 'platforms' | 'negative' | 'copycats' | 'recommendations';
 
@@ -28,6 +29,7 @@ const TABS: { key: Tab; label: string }[] = [
 export default function ResultsDashboard({ result, name, onReset }: Props) {
   const [tab, setTab] = useState<Tab>('platforms');
   const [showScoreModal, setShowScoreModal] = useState(false);
+  const [profileModalPlatform, setProfileModalPlatform] = useState<string | null>(null);
 
   return (
     <div className="w-full max-w-3xl mx-auto animate-fade-in">
@@ -35,6 +37,14 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         <ScoreExplanationModal
           score={result.overallScore}
           onClose={() => setShowScoreModal(false)}
+        />
+      )}
+
+      {profileModalPlatform && (
+        <ProfileQuestionnaireModal
+          platform={profileModalPlatform}
+          prefillName={name}
+          onClose={() => setProfileModalPlatform(null)}
         />
       )}
 
@@ -49,7 +59,7 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         </button>
       </div>
 
-      {/* Score hero — fully centered */}
+      {/* Score hero */}
       <div className="rounded-xl border border-brand-border bg-brand-card p-6 mb-6 flex flex-col items-center gap-6 text-center">
         <ScoreGauge
           score={result.overallScore}
@@ -99,7 +109,7 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
 
       {/* Tab content */}
       <div className="animate-slide-up">
-        {tab === 'platforms'       && <PlatformGrid platforms={result.platforms} />}
+        {tab === 'platforms'       && <PlatformGrid platforms={result.platforms} onCreateProfile={setProfileModalPlatform} />}
         {tab === 'negative'        && <NegativeContentList items={result.negativeContent} />}
         {tab === 'copycats'        && (
           <CopycatAlerts

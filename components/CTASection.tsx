@@ -12,23 +12,24 @@ interface Props {
 
 export default function CTASection({ verdict, score, name }: Props) {
   const colors = getVerdictColor(verdict);
-  const [email, setEmail] = useState('');
-  const [joined, setJoined] = useState(false);
-  const [joining, setJoining] = useState(false);
+  const [reportEmail, setReportEmail] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
 
-  const handleJoin = async (e: React.FormEvent) => {
+  const baseParams = new URLSearchParams({ name, score: String(score), verdict });
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setJoining(true);
+    if (!reportEmail) return;
+    setSubmittingReport(true);
     try {
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, score, verdict }),
+        body: JSON.stringify({ email: reportEmail, name, score, verdict, tier: 'full-report' }),
       });
     } catch { /* ignore */ }
-    setJoined(true);
-    setJoining(false);
+    const p = new URLSearchParams({ email: reportEmail, name, score: String(score), verdict });
+    window.open(`/full-report?${p}`, '_blank');
   };
 
   return (
@@ -42,29 +43,30 @@ export default function CTASection({ verdict, score, name }: Props) {
           {score >= 85 && `${name}, you're close to Authority Status — let's finish the job.`}
         </h3>
         <p className="text-slate-400 text-sm">
-          Choose your next step — from free community access to fully done-for-you profile creation.
+          Choose your next step — from a free basic report to a fully done-for-you digital presence.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        {/* Tier 0 — Free: Community */}
+        {/* Tier 0 — Free: Basic Report */}
         <div className="relative rounded-xl border border-brand-border bg-brand-card p-5 flex flex-col gap-4 text-center">
           <div>
-            <h4 className="font-bold text-white mb-1">Community Access</h4>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Starter</div>
+            <h4 className="font-bold text-white text-lg mb-1">Basic Report</h4>
             <div className="flex items-baseline gap-1 justify-center">
               <span className="text-3xl font-black text-white">Free</span>
             </div>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">
-            Join our Service by Serving community. Get your audit summary delivered to your inbox plus monthly digital presence tips.
+            Get your audit summary delivered to your inbox — your score, top missing platforms, and 3 quick wins.
           </p>
           <ul className="space-y-2 flex-1 text-left">
             {[
-              'Basic audit summary report',
-              'Monthly digital tips newsletter',
-              'Community resources & guides',
-              'Early access to new tools',
+              'Basic audit summary PDF',
+              'Top 3 missing platforms',
+              '3 quick-win action items',
+              'Monthly digital presence tips',
             ].map(f => (
               <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
                 <span className="text-brand-cyan mt-0.5 flex-shrink-0">✓</span>
@@ -72,29 +74,14 @@ export default function CTASection({ verdict, score, name }: Props) {
               </li>
             ))}
           </ul>
-          {joined ? (
-            <div className="py-3 rounded-lg bg-green-400/10 border border-green-400/30 text-green-400 text-sm font-semibold text-center">
-              🎉 You&apos;re in! Check your inbox.
-            </div>
-          ) : (
-            <form onSubmit={handleJoin} className="flex flex-col gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="w-full px-3 py-2.5 rounded-lg bg-brand-dark border border-brand-border text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-cyan transition-colors"
-              />
-              <button
-                type="submit"
-                disabled={joining}
-                className="w-full py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-brand-border/80 transition-all disabled:opacity-50"
-              >
-                {joining ? 'Joining...' : 'Join Free →'}
-              </button>
-            </form>
-          )}
+          <a
+            href={`/free-report?${baseParams}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-slate-700 transition-colors text-center block"
+          >
+            Get Free Report →
+          </a>
         </div>
 
         {/* Tier 1 — $47: Full Audit Report */}
@@ -111,22 +98,23 @@ export default function CTASection({ verdict, score, name }: Props) {
             </div>
           )}
           <div>
-            <h4 className="font-bold text-white mb-1">Full Audit Report</h4>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Most Popular</div>
+            <h4 className="font-bold text-white text-lg mb-1">Full Audit Report</h4>
             <div className="flex items-baseline gap-1 justify-center">
               <span className="text-3xl font-black text-white">$47</span>
               <span className="text-slate-500 text-sm">one-time</span>
             </div>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">
-            Complete PDF report with every finding, platform-by-platform breakdown, and a prioritized action checklist you can act on today.
+            Complete PDF — every platform, every finding, prioritized action checklist, and copycat alerts.
           </p>
           <ul className="space-y-2 flex-1 text-left">
             {[
-              'Detailed PDF audit report',
-              'Platform-by-platform analysis',
+              'Full platform-by-platform PDF',
               'Priority action checklist',
-              'Copycat monitoring alerts',
+              'Copycat & impersonator alerts',
               'Review response templates',
+              'Negative content breakdown',
             ].map(f => (
               <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
                 <span className="text-brand-cyan mt-0.5 flex-shrink-0">✓</span>
@@ -134,15 +122,28 @@ export default function CTASection({ verdict, score, name }: Props) {
               </li>
             ))}
           </ul>
-          <button
-            className={`w-full py-3 rounded-lg font-bold text-sm transition-opacity hover:opacity-90 ${
-              score < 85
-                ? 'bg-gradient-to-r from-brand-blue to-brand-cyan text-white'
-                : 'bg-brand-border text-white hover:bg-brand-border/80'
-            }`}
-          >
-            Get Full Report →
-          </button>
+          <form onSubmit={handleReportSubmit} className="flex flex-col gap-2">
+            <input
+              type="email"
+              value={reportEmail}
+              onChange={e => setReportEmail(e.target.value)}
+              placeholder="Enter your email to get started"
+              required
+              className="w-full px-3 py-2.5 rounded-lg bg-brand-dark border border-brand-border text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-cyan transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={submittingReport}
+              className={`w-full py-3 rounded-lg font-bold text-sm transition-opacity hover:opacity-90 disabled:opacity-50 ${
+                score < 85
+                  ? 'bg-gradient-to-r from-brand-blue to-brand-cyan text-white'
+                  : 'bg-brand-border text-white'
+              }`}
+            >
+              {submittingReport ? 'Processing...' : 'Get Full Report — $47 →'}
+            </button>
+          </form>
+          <p className="text-xs text-slate-600">Secure checkout via Stripe or PayPal</p>
         </div>
 
         {/* Tier 2 — Done For You */}
@@ -159,23 +160,30 @@ export default function CTASection({ verdict, score, name }: Props) {
             </div>
           )}
           <div>
-            <h4 className="font-bold text-white mb-1">Done For You</h4>
-            <div className="flex items-baseline gap-1 justify-center">
-              <span className="text-3xl font-black text-white">$497</span>
-              <span className="text-slate-500 text-sm">one-time</span>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Premium</div>
+            <h4 className="font-bold text-white text-lg mb-1">Done For You</h4>
+            <div className="flex flex-col items-center gap-0.5">
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-white">$297</span>
+                <span className="text-slate-500 text-sm">setup</span>
+              </div>
+              <div className="text-sm text-slate-400">
+                + <span className="text-white font-semibold">$59/mo</span>
+                <span className="text-slate-500 text-xs ml-1">lead automation</span>
+              </div>
             </div>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">
-            We build your complete digital presence — Facebook, YouTube, LinkedIn, and more — using AI-powered automation. You focus on clients; we handle the profiles.
+            We build your entire digital presence from scratch — profiles, content, and ongoing lead automation. You close deals.
           </p>
           <ul className="space-y-2 flex-1 text-left">
             {[
               'FB, YouTube & LinkedIn created',
-              'AI-powered profile content',
+              'AI-generated profile content',
               'Brand kit & visual consistency',
-              'Profile optimization & SEO',
-              'Monthly presence monitoring',
+              'Monthly lead automation',
               'Copycat protection setup',
+              'Dedicated account manager',
             ].map(f => (
               <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
                 <span className="text-brand-cyan mt-0.5 flex-shrink-0">✓</span>
@@ -183,9 +191,19 @@ export default function CTASection({ verdict, score, name }: Props) {
               </li>
             ))}
           </ul>
-          <button className="w-full py-3 rounded-lg bg-brand-border text-white font-bold text-sm hover:bg-brand-border/80 transition-opacity hover:opacity-90">
+          <a
+            href={`/done-for-you?${baseParams}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`w-full py-3 rounded-lg font-bold text-sm transition-opacity hover:opacity-90 text-center block ${
+              score >= 85
+                ? 'bg-gradient-to-r from-brand-blue to-brand-cyan text-white'
+                : 'bg-brand-border text-white hover:bg-slate-700'
+            }`}
+          >
             Get Started →
-          </button>
+          </a>
+          <p className="text-xs text-slate-600">Cancel anytime • No long-term contract</p>
         </div>
 
       </div>

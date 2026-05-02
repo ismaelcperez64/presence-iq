@@ -5,6 +5,7 @@ import AuditForm from '@/components/AuditForm';
 import ScanProgress from '@/components/ScanProgress';
 import ResultsDashboard from '@/components/ResultsDashboard';
 import LegalDisclaimer from '@/components/LegalDisclaimer';
+import VideoCTA from '@/components/VideoCTA';
 import type { AuditInput, AuditResult } from '@/types/audit';
 
 type AppState = 'idle' | 'scanning' | 'results' | 'error';
@@ -48,41 +49,64 @@ export default function Home() {
 
   return (
     <main className="min-h-screen px-4 py-12">
+
       {state === 'idle' && (
-        <div className="max-w-2xl mx-auto">
-          {/* Hero */}
-          <div className="text-center mb-10 animate-fade-in">
+        <div className="max-w-5xl mx-auto animate-fade-in">
+
+          {/* Hero — centered, full width */}
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-brand-cyan/10 border border-brand-cyan/20 rounded-full px-4 py-1.5 text-brand-cyan text-xs font-semibold mb-6">
               🔍 Free Digital Presence Audit
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">
+            <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight">
               How does the internet<br />
               <span className="bg-gradient-to-r from-brand-blue to-brand-cyan bg-clip-text text-transparent">
                 see you?
               </span>
             </h1>
-            <p className="text-slate-400 text-lg max-w-lg mx-auto">
-              We scan 20+ platforms, detect negative content, find copycats, and give you a real score — in under 60 seconds.
-            </p>
-
-            {/* Social proof */}
-            <div className="flex flex-wrap justify-center gap-4 mt-6 mb-10">
-              {['Google', 'LinkedIn', 'Facebook', 'Instagram', 'Yelp', 'Zillow', 'Reddit', '+more'].map(p => (
-                <span key={p} className="text-xs text-slate-500 bg-brand-card border border-brand-border rounded-full px-3 py-1">
-                  {p}
-                </span>
-              ))}
-            </div>
           </div>
 
-          {/* Form card */}
-          <div className="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
-            <AuditForm onSubmit={handleSubmit} loading={false} />
+          {/* "We scan" — centered above both boxes */}
+          <p className="text-slate-400 text-sm text-center mb-5">
+            We scan 20+ platforms, detect negative content, find copycats, and give you a real score — in under 60 seconds.
+          </p>
+
+          {/* Video + Form — side by side on md+, stacked on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+
+            {/* LEFT: Video (fills height) + CTA strip */}
+            <div className="flex flex-col">
+              <div className="relative flex-1 min-h-[220px] rounded-2xl overflow-hidden border border-brand-border bg-brand-card flex items-center justify-center group cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/10 to-brand-cyan/5" />
+                <div className="relative flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center group-hover:bg-brand-cyan/20 group-hover:scale-110 transition-all duration-200">
+                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[18px] border-l-brand-cyan ml-1" />
+                  </div>
+                  <p className="text-slate-400 text-sm">30-second intro video</p>
+                  <p className="text-slate-600 text-xs text-center px-4">— drop your YouTube or Vimeo embed here —</p>
+                </div>
+              </div>
+              <VideoCTA />
+            </div>
+
+            {/* RIGHT: Form */}
+            <div className="bg-brand-card border border-brand-border rounded-2xl p-6">
+              <AuditForm onSubmit={handleSubmit} loading={false} />
+            </div>
+
+          </div>
+
+          {/* Platform pills — centered below both columns */}
+          <div className="flex flex-wrap justify-center gap-3 mt-8">
+            {['Google', 'LinkedIn', 'Facebook', 'Instagram', 'Yelp', 'Zillow', 'Reddit', '+more'].map(p => (
+              <span key={p} className="text-xs text-slate-500 bg-brand-card border border-brand-border rounded-full px-3 py-1">
+                {p}
+              </span>
+            ))}
           </div>
 
           <LegalDisclaimer />
 
-          {/* Trust row */}
           <div className="flex flex-wrap justify-center gap-6 mt-6 text-xs text-slate-600">
             <span>🔒 We don&apos;t store your data</span>
             <span>⚡ Results in under 60 seconds</span>
