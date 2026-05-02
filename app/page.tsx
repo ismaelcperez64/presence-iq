@@ -13,6 +13,7 @@ type AppState = 'idle' | 'scanning' | 'results' | 'error';
 export default function Home() {
   const [state, setState] = useState<AppState>('idle');
   const [result, setResult] = useState<AuditResult | null>(null);
+  const [sessionId, setSessionId] = useState('');
   const [submittedName, setSubmittedName] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -33,7 +34,9 @@ export default function Home() {
       const json = await res.json();
       if (json.error) throw new Error(json.error);
 
-      setResult(json);
+      const { sessionId: sid, ...auditData } = json;
+      setSessionId(sid || '');
+      setResult(auditData as AuditResult);
       setState('results');
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong.');
@@ -44,6 +47,7 @@ export default function Home() {
   const reset = () => {
     setState('idle');
     setResult(null);
+    setSessionId('');
     setErrorMsg('');
   };
 
@@ -53,7 +57,7 @@ export default function Home() {
       {state === 'idle' && (
         <div className="max-w-5xl mx-auto animate-fade-in">
 
-          {/* Hero — centered, full width */}
+          {/* Hero */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-brand-cyan/10 border border-brand-cyan/20 rounded-full px-4 py-1.5 text-brand-cyan text-xs font-semibold mb-6">
               🔍 Free Digital Presence Audit
@@ -66,15 +70,12 @@ export default function Home() {
             </h1>
           </div>
 
-          {/* "We scan" — centered above both boxes */}
           <p className="text-slate-400 text-sm text-center mb-5">
             We scan 20+ platforms, detect negative content, find copycats, and give you a real score — in under 60 seconds.
           </p>
 
-          {/* Video + Form — side by side on md+, stacked on mobile */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
 
-            {/* LEFT: Video (fills height) + CTA strip */}
             <div className="flex flex-col">
               <div className="relative flex-1 min-h-[220px] rounded-2xl overflow-hidden border border-brand-border bg-brand-card flex items-center justify-center group cursor-pointer">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/10 to-brand-cyan/5" />
@@ -89,14 +90,12 @@ export default function Home() {
               <VideoCTA />
             </div>
 
-            {/* RIGHT: Form */}
             <div className="bg-brand-card border border-brand-border rounded-2xl p-6">
               <AuditForm onSubmit={handleSubmit} loading={false} />
             </div>
 
           </div>
 
-          {/* Platform pills — centered below both columns */}
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             {['Google', 'LinkedIn', 'Facebook', 'Instagram', 'Yelp', 'Zillow', 'Reddit', '+more'].map(p => (
               <span key={p} className="text-xs text-slate-500 bg-brand-card border border-brand-border rounded-full px-3 py-1">
@@ -122,7 +121,7 @@ export default function Home() {
       )}
 
       {state === 'results' && result && (
-        <ResultsDashboard result={result} name={submittedName} onReset={reset} />
+        <ResultsDashboard result={result} name={submittedName} onReset={reset} sessionId={sessionId} />
       )}
 
       {state === 'error' && (

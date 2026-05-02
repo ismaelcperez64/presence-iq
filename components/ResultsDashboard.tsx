@@ -17,6 +17,7 @@ interface Props {
   result: AuditResult;
   name: string;
   onReset: () => void;
+  sessionId?: string;
 }
 
 const TABS: { key: Tab; label: string }[] = [
@@ -26,7 +27,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'recommendations', label: 'Action Plan' },
 ];
 
-export default function ResultsDashboard({ result, name, onReset }: Props) {
+export default function ResultsDashboard({ result, name, onReset, sessionId }: Props) {
   const [tab, setTab] = useState<Tab>('platforms');
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [profileModalPlatform, setProfileModalPlatform] = useState<string | null>(null);
@@ -48,7 +49,6 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         />
       )}
 
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-black text-white">Your Audit Results</h2>
@@ -59,7 +59,6 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         </button>
       </div>
 
-      {/* Score hero */}
       <div className="rounded-xl border border-brand-border bg-brand-card p-6 mb-6 flex flex-col items-center gap-6 text-center">
         <ScoreGauge
           score={result.overallScore}
@@ -92,7 +91,6 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 bg-brand-card rounded-lg p-1 mb-6 border border-brand-border">
         {TABS.map(t => (
           <button
@@ -107,7 +105,6 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         ))}
       </div>
 
-      {/* Tab content */}
       <div className="animate-slide-up">
         {tab === 'platforms'       && <PlatformGrid platforms={result.platforms} onCreateProfile={setProfileModalPlatform} />}
         {tab === 'negative'        && <NegativeContentList items={result.negativeContent} />}
@@ -121,8 +118,7 @@ export default function ResultsDashboard({ result, name, onReset }: Props) {
         {tab === 'recommendations' && <RecommendationsList items={result.recommendations} />}
       </div>
 
-      {/* CTA */}
-      <CTASection verdict={result.verdict} score={result.overallScore} name={name} />
+      <CTASection verdict={result.verdict} score={result.overallScore} name={name} sessionId={sessionId} />
     </div>
   );
 }

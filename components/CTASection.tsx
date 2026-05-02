@@ -8,9 +8,10 @@ interface Props {
   verdict: Verdict;
   score: number;
   name: string;
+  sessionId?: string;
 }
 
-export default function CTASection({ verdict, score, name }: Props) {
+export default function CTASection({ verdict, score, name, sessionId }: Props) {
   const colors = getVerdictColor(verdict);
   const [reportEmail, setReportEmail] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
@@ -28,13 +29,12 @@ export default function CTASection({ verdict, score, name }: Props) {
         body: JSON.stringify({ email: reportEmail, name, score, verdict, tier: 'full-report' }),
       });
     } catch { /* ignore */ }
-    const p = new URLSearchParams({ email: reportEmail, name, score: String(score), verdict });
+    const p = new URLSearchParams({ email: reportEmail, name, score: String(score), verdict, ...(sessionId ? { sessionId } : {}) });
     window.open(`/full-report?${p}`, '_blank');
   };
 
   return (
     <div id="cta-section" className="mt-8">
-      {/* Personalized headline */}
       <div className={`rounded-xl border p-6 mb-8 text-center ${colors.bg} ${colors.border}`}>
         <h3 className={`text-xl font-black mb-2 ${colors.text}`}>
           {score < 40 && `${name}, your digital presence needs urgent attention.`}
@@ -49,7 +49,6 @@ export default function CTASection({ verdict, score, name }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        {/* Tier 0 — Free: Basic Report */}
         <div className="relative rounded-xl border border-brand-border bg-brand-card p-5 flex flex-col gap-4 text-center">
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Starter</div>
@@ -84,7 +83,6 @@ export default function CTASection({ verdict, score, name }: Props) {
           </a>
         </div>
 
-        {/* Tier 1 — $47: Full Audit Report */}
         <div className={`relative rounded-xl border p-5 flex flex-col gap-4 text-center ${
           score < 85
             ? 'border-brand-cyan bg-brand-cyan/5 shadow-lg shadow-brand-cyan/10'
@@ -146,7 +144,6 @@ export default function CTASection({ verdict, score, name }: Props) {
           <p className="text-xs text-slate-600">Secure checkout via Stripe or PayPal</p>
         </div>
 
-        {/* Tier 2 — Done For You */}
         <div className={`relative rounded-xl border p-5 flex flex-col gap-4 text-center ${
           score >= 85
             ? 'border-brand-cyan bg-brand-cyan/5 shadow-lg shadow-brand-cyan/10'
