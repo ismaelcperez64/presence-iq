@@ -1,20 +1,26 @@
 export async function storeAuditData(sessionId: string, data: unknown): Promise<void> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) return;
+  if (!process.env.REDIS_URL) return;
   try {
-    const { Redis } = await import('@upstash/redis');
-    const redis = new Redis({ url: process.env.UPSTASH_REDIS_REST_URL!, token: process.env.UPSTASH_REDIS_REST_TOKEN! });
-    await redis.set(sessionId, data, { ex: 60 * 60 * 24 * 7 });
+    const { createClient } = await import('redis');
+    const client = createClient({ url: process.env.REDIS_URL });
+    await client.connect();
+    await client.set(sessionId, JSON.stringify(data), { EX: 60 * 60 * 24 * 7 });
+    await client.disconnect();
   } catch (err) {
     console.error('[KV] store failed:', err);
   }
 }
 
 export async function getAuditData(sessionId: string): Promise<unknown | null> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) return null;
+  if (!process.env.REDIS_URL) return null;
   try {
-    const { Redis } = await import('@upstash/redis');
-    const redis = new Redis({ url: process.env.UPSTASH_REDIS_REST_URL!, token: process.env.UPSTASH_REDIS_REST_TOKEN! });
-    return await redis.get(sessionId);
+    const { createClient } = await import('redis');
+    const client = createClient({ url: process.env.REDIS_URL });
+    await client.connect();
+    const raw = await client.get(sessionId);
+    await client.disconnect();
+    if (!raw) return null;
+    return JSON.parse(raw);
   } catch (err) {
     console.error('[KV] get failed:', err);
     return null;
