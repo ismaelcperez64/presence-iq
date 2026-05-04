@@ -21,65 +21,71 @@ async function sendEmail(to: string, subject: string, html: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const sig = req.headers.get('stripe-signature');
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  if (!sig || !secret) {
-    return NextResponse.json({ error: 'Missing signature or secret' }, { status: 400 });
-  }
-
-  let event: Stripe.Event;
+  let payload: { type?: string; data?: { object?: { id?: string } } };
   try {
-    event = stripe.webhooks.constructEvent(body, sig, secret);
-  } catch (err) {
-    console.error('[Stripe] Signature verification failed:', err);
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    payload = JSON.parse(body);
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const sessionId = session.client_reference_id;
-    const customerEmail = session.customer_details?.email;
-    const customerName = session.customer_details?.name || 'there';
-    const amountTotal = session.amount_total ?? 0;
-    const isDFY = amountTotal >= 29700; // $297 in cents
+  if (payload.type !== 'checkout.session.completed') {
+    return NextResponse.json({ received: true });
+  }
 
-    console.log('[Stripe] Payment confirmed:', { sessionId, customerEmail, amountTotal, isDFY });
+  const sessionId = payload.data?.object?.id;
+  if (!sessionId) {
+    return NextResponse.json({ error: 'No session ID' }, { status: 400 });
+  }
 
-    if (!customerEmail) {
-      console.error('[Stripe] No customer email in session');
-      return NextResponse.json({ received: true });
-    }
+  // Verify the session directly with Stripe — no signature secret needed
+  let session: Stripe.Checkout.Session;
+  try {
+    session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['customer_details'],
+    });
+  } catch (err) {
+    console.error('[Stripe] Session retrieval failed:', err);
+    return NextResponse.json({ error: 'Session not found' }, { status: 400 });
+  }
 
-    try {
-      if (isDFY) {
-        const html = generateDFYConfirmationHtml(customerName);
-        await sendEmail(
-          customerEmail,
-          `You're confirmed — Done For You starts now`,
-          html
-        );
-        console.log('[Email] DFY confirmation sent to:', customerEmail);
+  if (session.payment_status !== 'paid') {
+    console.log('[Stripe] Session not paid, ignoring:', session.payment_status);
+    return NextResponse.json({ received: true });
+  }
+
+  const auditSessionId = session.client_reference_id;
+  const customerEmail = session.customer_details?.email;
+  const customerName = session.customer_details?.name || 'there';
+  const amountTotal = session.amount_total ?? 0;
+  const isDFY = amountTotal >= 29700;
+
+  console.log('[Stripe] Payment confirmed:', { auditSessionId, customerEmail, amountTotal, isDFY });
+
+  if (!customerEmail) {
+    console.error('[Stripe] No customer email in session');
+    return NextResponse.json({ received: true });
+  }
+
+  try {
+    if (isDFY) {
+      const html = generateDFYConfirmationHtml(customerName);
+      await sendEmail(customerEmail, `You're confirmed — Done For You starts now`, html);
+      console.log('[Email] DFY confirmation sent to:', customerEmail);
+    } else {
+      let html: string;
+      if (auditSessionId) {
+        const stored = await getAuditData(auditSessionId) as { auditResult: AuditResult; input: AuditInput } | null;
+        html = generateReportHtml(stored?.auditResult ?? null, stored?.input?.name || customerName);
       } else {
-        let html: string;
-        if (sessionId) {
-          const stored = await getAuditData(sessionId) as { auditResult: AuditResult; input: AuditInput } | null;
-          html = generateReportHtml(stored?.auditResult ?? null, stored?.input?.name || customerName);
-        } else {
-          html = generateReportHtml(null, customerName);
-        }
-        const firstName = customerName.split(' ')[0];
-        await sendEmail(
-          customerEmail,
-          `Your Digital Presence Report is ready, ${firstName}`,
-          html
-        );
-        console.log('[Email] Full report sent to:', customerEmail);
+        html = generateReportHtml(null, customerName);
       }
-    } catch (err) {
-      console.error('[Email] Send failed:', err);
-      // Still return 200 so Stripe does not retry — log for manual follow-up
+      const firstName = customerName.split(' ')[0];
+      await sendEmail(customerEmail, `Your Digital Presence Report is ready, ${firstName}`, html);
+      console.log('[Email] Full report sent to:', customerEmail);
     }
+  } catch (err) {
+    console.error('[Email] Send failed:', err);
   }
 
   return NextResponse.json({ received: true });
