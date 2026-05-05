@@ -34,7 +34,7 @@ function FullReportContent() {
       : 'https://buy.stripe.com/test_8x214m6cub274Yf2TU9ws01';
     const refId = sessionId || name;
     const paymentUrl = `${base}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(refId)}`;
-    window.open(paymentUrl, '_blank');
+    window.location.href = paymentUrl;
     setShowUpsell(false);
     setCheckoutStarted(true);
   };
@@ -48,12 +48,14 @@ function FullReportContent() {
     <main className="min-h-screen bg-brand-dark px-4 py-12">
       <div className="max-w-2xl mx-auto">
 
+        {/* Logo */}
         <div className="text-center mb-10">
           <a href="/" className="inline-flex items-center gap-2 text-brand-cyan font-black text-lg tracking-tight">
             <span className="text-2xl">🔍</span> PresenceIQ
           </a>
         </div>
 
+        {/* Hero */}
         <div className="text-center mb-8 animate-fade-in">
           {score > 0 && (
             <div className={`inline-flex items-center gap-2 bg-brand-card border border-brand-border rounded-full px-4 py-1.5 text-xs font-semibold mb-4 ${verdictColor}`}>
@@ -71,6 +73,7 @@ function FullReportContent() {
           </p>
         </div>
 
+        {/* Feature grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
           {FEATURES.map(({ icon, title, desc }) => (
             <div key={title} className="rounded-xl border border-brand-border bg-brand-card p-4 flex gap-3">
@@ -83,14 +86,7 @@ function FullReportContent() {
           ))}
         </div>
 
-        {checkoutStarted && (
-          <div className="rounded-2xl border border-brand-cyan/40 bg-brand-cyan/5 p-5 mb-6 text-center animate-fade-in">
-            <p className="text-2xl mb-2">🎉</p>
-            <p className="text-white font-bold mb-1">Checkout opened in a new tab</p>
-            <p className="text-slate-400 text-sm">Complete your payment there — your report will be emailed as soon as it's confirmed.</p>
-          </div>
-        )}
-
+        {/* Order box */}
         <div className={`rounded-2xl border border-brand-cyan/30 bg-brand-cyan/5 p-6 mb-6 transition-opacity ${checkoutStarted ? 'opacity-40 pointer-events-none' : ''}`}>
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -116,12 +112,13 @@ function FullReportContent() {
             Complete Purchase — $47 →
           </button>
           <p className="text-center text-xs text-slate-600 mt-2">
-            🔒 Secure checkout via Stripe or PayPal • Instant delivery
+            🔒 Secure checkout via Stripe • Instant delivery
           </p>
         </div>
 
+        {/* Trust row */}
         <div className="flex flex-wrap justify-center gap-6 text-xs text-slate-600">
-          <span>💳 Stripe &amp; PayPal accepted</span>
+          <span>💳 Stripe accepted</span>
           <span>📬 Delivered instantly to your email</span>
           <span>🔒 100% money-back guarantee</span>
         </div>
@@ -131,7 +128,7 @@ function FullReportContent() {
         </a>
       </div>
 
-      {/* Upsell Modal */}
+      {/* ── Upsell Modal ── */}
       {showUpsell && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl">
