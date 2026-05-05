@@ -4,9 +4,17 @@ import { useState, useEffect } from 'react';
 import type { AuditInput, CustomPlatform } from '@/types/audit';
 
 const PROFESSIONS = [
-  'Realtor', 'Mortgage Lender', 'Financial Advisor', 'Insurance Agent',
-  'Attorney / Lawyer', 'Counselor / Therapist', 'Contractor / Builder',
-  'Business Owner', 'Other',
+  'Realtor / Broker',
+  'Financial Services',
+  'Insurance Agent',
+  'Attorney / Lawyer',
+  'Medical Professional',
+  'Civil Service (Police, Fire, etc.)',
+  'Education / Academic',
+  'Counselor / Therapist',
+  'Contractor / Builder',
+  'Business Owner',
+  'Other',
 ];
 
 // Well-known platforms that may not be in the main form
@@ -76,7 +84,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.businessName || !form.profession) return;
-    // Save any new platform names to localStorage for future sessions
     form.otherProfiles?.forEach(p => savePlatformName(p.platform));
     onSubmit(form);
   };
@@ -86,7 +93,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto space-y-4">
-      {/* Core fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
@@ -132,7 +138,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
         </div>
       </div>
 
-      {/* Known profiles collapsible */}
       <div className="rounded-lg border border-brand-border bg-brand-dark/40 overflow-hidden">
         <button type="button" onClick={() => setShowProfiles(p => !p)}
           className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-brand-border/20 transition-colors">
@@ -155,7 +160,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
               Paste your actual profile URLs below. These are treated as confirmed and analyzed for quality, completeness, and issues. New platforms you add are remembered for your next audit.
             </p>
 
-            {/* Standard platforms */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {([
                 { field: 'linkedinUrl' as const, label: 'LinkedIn', placeholder: 'linkedin.com/in/your-name' },
@@ -173,7 +177,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
               ))}
             </div>
 
-            {/* Other / custom platforms */}
             {(form.otherProfiles ?? []).length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Other Platforms</p>
@@ -210,7 +213,6 @@ export default function AuditForm({ onSubmit, loading }: Props) {
               + Add another platform (Pinterest, Snapchat, Threads, etc.)
             </button>
 
-            {/* datalist for autocomplete suggestions */}
             <datalist id="platform-suggestions">
               {suggestions.map(s => <option key={s} value={s} />)}
             </datalist>
