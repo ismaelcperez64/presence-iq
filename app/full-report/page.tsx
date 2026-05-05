@@ -131,6 +131,7 @@ function FullReportContent() {
         </a>
       </div>
 
+      {/* Upsell Modal */}
       {showUpsell && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl">
@@ -147,16 +148,22 @@ function FullReportContent() {
               </p>
             </div>
 
+            {/* Comparison */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="rounded-lg border border-brand-border bg-brand-dark p-3 text-center">
+              <button
+                onClick={() => goToPayment(false)}
+                className="rounded-lg border border-brand-border bg-brand-dark p-3 text-center hover:border-slate-500 hover:bg-slate-800 transition-all group cursor-pointer"
+              >
                 <p className="text-xs text-slate-500 mb-1">Full Report only</p>
                 <p className="text-xl font-black text-white">$47</p>
                 <p className="text-xs text-slate-500">You do the work</p>
-              </div>
+                <p className="text-xs text-slate-600 group-hover:text-slate-300 mt-1 transition-colors">Select →</p>
+              </button>
               <div className="rounded-lg border border-brand-cyan/40 bg-brand-cyan/5 p-3 text-center">
                 <p className="text-xs text-brand-cyan mb-1">Report + Done For You</p>
                 <p className="text-xl font-black text-white">$297<span className="text-sm font-normal text-slate-400"> + $59/mo</span></p>
                 <p className="text-xs text-slate-500">We do the work</p>
+                <p className="text-xs text-brand-cyan/70 mt-1">Recommended</p>
               </div>
             </div>
 
@@ -176,15 +183,15 @@ function FullReportContent() {
 
             <button
               onClick={() => goToPayment(true)}
-              className="w-full py-3.5 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-sm hover:opacity-90 transition-opacity mb-2"
+              className="w-full py-3.5 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-sm hover:opacity-90 transition-opacity mb-3"
             >
               Yes! Add Done For You — $297 setup + $59/mo →
             </button>
             <button
               onClick={() => goToPayment(false)}
-              className="w-full py-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+              className="w-full py-3 rounded-lg border border-brand-border text-slate-300 font-semibold text-sm hover:border-slate-500 hover:text-white transition-all"
             >
-              No thanks, just the $47 report
+              Just the $47 Report →
             </button>
           </div>
         </div>
